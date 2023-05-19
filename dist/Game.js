@@ -21,6 +21,7 @@ export class Game {
         const cells = Game.board.getCells();
         const currentPlayer = Game.getCurrentPlayer();
         let hasWon = false;
+        //horizontal
         for (let row = 0; row < cells.length; row++) {
             let count = 0;
             for (let col = 0; col < cells[row].length; col++) {
@@ -38,7 +39,7 @@ export class Game {
             if (hasWon)
                 break;
         }
-        // vertical
+        //vertical
         if (!hasWon) {
             for (let col = 0; col < cells[0].length; col++) {
                 let count = 0;
@@ -58,13 +59,37 @@ export class Game {
                     break;
             }
         }
-        // diagonal
+        // diagonal (top-left to bottom-right)
         if (!hasWon) {
             for (let startRow = 0; startRow <= cells.length - 4; startRow++) {
                 for (let startCol = 0; startCol <= cells[0].length - 4; startCol++) {
                     let count = 0;
                     for (let i = 0; i < 4; i++) {
                         if (cells[startRow + i][startCol + i].getValue() === currentPlayer.getSymbol()) {
+                            count++;
+                            if (count === 4) {
+                                hasWon = true;
+                                break;
+                            }
+                        }
+                        else {
+                            count = 0;
+                        }
+                    }
+                    if (hasWon)
+                        break;
+                }
+                if (hasWon)
+                    break;
+            }
+        }
+        // diagonal (top-right to bottom-left)
+        if (!hasWon) {
+            for (let startRow = 0; startRow <= cells.length - 4; startRow++) {
+                for (let startCol = cells[0].length - 1; startCol >= 3; startCol--) {
+                    let count = 0;
+                    for (let i = 0; i < 4; i++) {
+                        if (cells[startRow + i][startCol - i].getValue() === currentPlayer.getSymbol()) {
                             count++;
                             if (count === 4) {
                                 hasWon = true;
