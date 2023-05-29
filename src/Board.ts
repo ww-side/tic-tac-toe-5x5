@@ -38,8 +38,8 @@ export class Board {
   }
 
   reset(): void {
-    this.cells.forEach((row) => {
-      row.forEach((cell) => {
+    this.cells.forEach(row => {
+      row.forEach(cell => {
         cell.setValue(null);
       });
     });

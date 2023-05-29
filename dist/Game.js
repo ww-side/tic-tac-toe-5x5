@@ -1,9 +1,13 @@
 import { Player } from './Player.js';
 export class Game {
-    static players = [
-        new Player('User 1', 'X'),
-        new Player('User 2', 'O')
-    ];
+    static players = [];
+    static initializePlayers(player1Name, player2Name) {
+        Game.players = [
+            new Player(player1Name, 'X'),
+            new Player(player2Name, 'O')
+        ];
+        console.log(Game.players);
+    }
     static currentPlayerIndex = 0;
     static board;
     static gameOver = false;
@@ -21,87 +25,68 @@ export class Game {
         const cells = Game.board.getCells();
         const currentPlayer = Game.getCurrentPlayer();
         let hasWon = false;
-        //horizontal
-        for (let row = 0; row < cells.length; row++) {
+        const checkConsecutiveSymbols = (symbols) => {
             let count = 0;
-            for (let col = 0; col < cells[row].length; col++) {
-                if (cells[row][col].getValue() === currentPlayer.getSymbol()) {
+            for (const symbol of symbols) {
+                if (symbol === currentPlayer.getSymbol()) {
                     count++;
                     if (count === 4) {
-                        hasWon = true;
-                        break;
+                        return true;
                     }
                 }
                 else {
                     count = 0;
                 }
             }
-            if (hasWon)
+            return false;
+        };
+        // Horizontal
+        for (const row of cells) {
+            const rowSymbols = row.map(cell => cell.getValue());
+            if (checkConsecutiveSymbols(rowSymbols)) {
+                hasWon = true;
                 break;
-        }
-        //vertical
-        if (!hasWon) {
-            for (let col = 0; col < cells[0].length; col++) {
-                let count = 0;
-                for (let row = 0; row < cells.length; row++) {
-                    if (cells[row][col].getValue() === currentPlayer.getSymbol()) {
-                        count++;
-                        if (count === 4) {
-                            hasWon = true;
-                            break;
-                        }
-                    }
-                    else {
-                        count = 0;
-                    }
-                }
-                if (hasWon)
-                    break;
             }
         }
-        // diagonal (top-left to bottom-right)
+        // Vertical
+        if (!hasWon) {
+            for (let col = 0; col < cells[0].length; col++) {
+                const columnSymbols = cells.map(row => row[col].getValue());
+                if (checkConsecutiveSymbols(columnSymbols)) {
+                    hasWon = true;
+                    break;
+                }
+            }
+        }
+        // Diagonal (top-left to bottom-right)
         if (!hasWon) {
             for (let startRow = 0; startRow <= cells.length - 4; startRow++) {
                 for (let startCol = 0; startCol <= cells[0].length - 4; startCol++) {
-                    let count = 0;
+                    const diagonalSymbols = [];
                     for (let i = 0; i < 4; i++) {
-                        if (cells[startRow + i][startCol + i].getValue() === currentPlayer.getSymbol()) {
-                            count++;
-                            if (count === 4) {
-                                hasWon = true;
-                                break;
-                            }
-                        }
-                        else {
-                            count = 0;
-                        }
+                        diagonalSymbols.push(cells[startRow + i][startCol + i].getValue());
                     }
-                    if (hasWon)
+                    if (checkConsecutiveSymbols(diagonalSymbols)) {
+                        hasWon = true;
                         break;
+                    }
                 }
                 if (hasWon)
                     break;
             }
         }
-        // diagonal (top-right to bottom-left)
+        // Diagonal (top-right to bottom-left)
         if (!hasWon) {
             for (let startRow = 0; startRow <= cells.length - 4; startRow++) {
                 for (let startCol = cells[0].length - 1; startCol >= 3; startCol--) {
-                    let count = 0;
+                    const diagonalSymbols = [];
                     for (let i = 0; i < 4; i++) {
-                        if (cells[startRow + i][startCol - i].getValue() === currentPlayer.getSymbol()) {
-                            count++;
-                            if (count === 4) {
-                                hasWon = true;
-                                break;
-                            }
-                        }
-                        else {
-                            count = 0;
-                        }
+                        diagonalSymbols.push(cells[startRow + i][startCol - i].getValue());
                     }
-                    if (hasWon)
+                    if (checkConsecutiveSymbols(diagonalSymbols)) {
+                        hasWon = true;
                         break;
+                    }
                 }
                 if (hasWon)
                     break;
@@ -111,8 +96,9 @@ export class Game {
             Game.handleWin(currentPlayer);
             return;
         }
-        if (Game.isBoardFull())
+        if (Game.isBoardFull()) {
             Game.handleTie();
+        }
     }
     static handleWin(player) {
         if (Game.gameOver)
@@ -123,7 +109,7 @@ export class Game {
                 alert(`Player ${player.getName()} wins!`);
                 Game.resetGame();
             }
-        }, 50);
+        }, 10);
     }
     static handleTie() {
         Game.gameOver = true;
@@ -134,6 +120,13 @@ export class Game {
         Game.currentPlayerIndex = 0;
         Game.board.reset();
         Game.gameOver = false;
+        const cells = Game.board.getCells();
+        cells.forEach(row => {
+            row.forEach(cell => {
+                const cellElement = cell.getElement();
+                cellElement.classList.remove('cell-active');
+            });
+        });
     }
 }
 //# sourceMappingURL=Game.js.map
