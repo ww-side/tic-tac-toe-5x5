@@ -1,0 +1,12 @@
+{
+  "name": "tic-tac-toe-5x5",
+  "version": "1.0.0",
+  "description": "Link to view project: https://tic-tac-toe-5x5.netlify.app/",
+  "main": "Main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC"
+}
